@@ -4,6 +4,10 @@ import Image from "next/image";
 import assets from '@/assets'
 import Link from "next/link";
 import { useForm, SubmitHandler } from "react-hook-form"
+import {modifyPayload} from "@/utils/modifyPayload";
+import {registerPatient} from "@/services/actions/registerPatient";
+import {toast} from "sonner";
+import {useRouter} from "next/navigation";
 
 interface IPatientData {
   name: string
@@ -18,13 +22,28 @@ interface IPatientRegisterFormData {
 }
 
 const RegisterPage = () => {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<IPatientRegisterFormData>()
-  const onSubmit: SubmitHandler<IPatientRegisterFormData> = (data) => console.log(data)
+  const onSubmit: SubmitHandler<IPatientRegisterFormData> = async(values) => {
+    const data = modifyPayload(values)
+    try{
+      const res = await registerPatient(data)
+
+      if(res?.data?.id){
+        toast.success(res?.message)
+        router.push('/login')
+      }
+
+      console.log(res, 'res')
+    }catch(err: any){
+      console.log(err.message)
+    }
+  }
   return (
     <Container>
       <Stack sx={{justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
