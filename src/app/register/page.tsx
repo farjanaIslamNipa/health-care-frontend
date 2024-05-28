@@ -29,6 +29,8 @@ const RegisterPage = () => {
     watch,
     formState: { errors },
   } = useForm<IPatientRegisterFormData>()
+
+  
   const onSubmit: SubmitHandler<IPatientRegisterFormData> = async(values) => {
     const data = modifyPayload(values)
     try{

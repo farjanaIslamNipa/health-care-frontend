@@ -1,10 +1,38 @@
+'use client'
 import {Box, Button, Container, Grid, Stack, TextField, Typography} from "@mui/material";
 import Image from "next/image";
 import assets from '@/assets'
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {loginUser} from "@/services/actions/loginUser";
 
+
+export type TLoginUserData = {
+  email: string;
+  password: string
+}
 
 const LoginPage = () => {
+  const router = useRouter()
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<TLoginUserData>()
+
+  const onSubmit: SubmitHandler<TLoginUserData> = async(values) => {
+   
+    try{
+
+      const res = await loginUser(values)
+      console.log(values, 'val')
+      console.log(res, 'res')
+    }catch(err: any){
+      console.log(err.message)
+    }
+  }
   return (
     <Container>
       <Stack sx={{justifyContent: 'center', alignItems: 'center', height: '100vh'}}>
@@ -26,19 +54,19 @@ const LoginPage = () => {
             </Box>
           </Stack>
           <Box sx={{textAlign: 'center'}}>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
               <Grid container spacing={2} my={1}>
                 <Grid item md={6}>
-                  <TextField size="small" fullWidth={true} id="outlined-basic" label="Email" type="email" variant="outlined" />
+                  <TextField size="small" fullWidth={true} id="outlined-basic" label="Email" type="email" variant="outlined" {...register("email")} />
                 </Grid>
                 <Grid item md={6}>
-                  <TextField size="small" fullWidth={true} id="outlined-basic" label="Password" type="password" variant="outlined" />
+                  <TextField size="small" fullWidth={true} id="outlined-basic" label="Password" type="password" variant="outlined" {...register("password")} />
                 </Grid>
               </Grid>
               <Typography sx={{marginTop: '10px'}} textAlign="end" component="p" fontWeight={300}>
                   Forgot Password? <Link href="/register">Click Here</Link>
               </Typography>
-              <Button sx={{margin: '10px 0'}} fullWidth={true}>Login</Button>
+              <Button type="submit" sx={{margin: '10px 0'}} fullWidth={true}>Login</Button>
               <Typography component="p" fontWeight={300}>
                   Don&apos;t have an account? <Link href="/register">Create an account</Link>
               </Typography>
