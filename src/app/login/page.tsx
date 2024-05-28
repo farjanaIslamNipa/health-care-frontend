@@ -6,6 +6,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {loginUser} from "@/services/actions/loginUser";
+import {storeUserInfo} from "@/services/auth.services";
 
 
 export type TLoginUserData = {
@@ -25,9 +26,10 @@ const LoginPage = () => {
   const onSubmit: SubmitHandler<TLoginUserData> = async(values) => {
    
     try{
-
       const res = await loginUser(values)
-      console.log(values, 'val')
+      if(res?.data?.accessToken){
+        storeUserInfo({accessToken: res?.data?.accessToken})
+      }
       console.log(res, 'res')
     }catch(err: any){
       console.log(err.message)
